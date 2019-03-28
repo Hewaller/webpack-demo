@@ -1,5 +1,5 @@
 export function square(x) {
-  return x * x
+  return '这里是dev分支'
 }
 
 export function cube(x) {
