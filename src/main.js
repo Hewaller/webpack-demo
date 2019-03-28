@@ -1,5 +1,5 @@
 export function square(x) {
-  return x * x
+  return 'branch-test'
 }
 
 export function cube(x) {
