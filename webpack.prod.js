@@ -11,6 +11,7 @@ module.exports = merge(common, {
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
     new UglifyJSPlugin({
+      // 如果使用ES6，要转译为ES5
       sourceMap: true
     })
   ]

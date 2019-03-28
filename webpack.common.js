@@ -6,7 +6,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
   entry: {
-    app: './src/index.js'
+    index: './src/index.js'
   },
   plugins: [
     new CleanWebpackPlugin(['dist']), // 每次打包前主动清理dist文件里的内容
@@ -16,7 +16,7 @@ module.exports = {
   ],
   output: {
     // filename: 'main.js',
-    filename: '[name].bundle.js',
+    filename: '[name].[chunkhash].bundle.js', //每次修改都更改输出后的名称，防止浏览器缓存，线上代码未更新
     path: path.resolve(__dirname, 'dist')
   }
 }
