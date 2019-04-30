@@ -2,6 +2,7 @@
 <template>
   <div class="App">
     <div id="nav">
+      test
       <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>
     </div>
