@@ -6,7 +6,7 @@ import About from '../views/About.vue'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'history', // hash路由可以在本地来运行访问
   base: process.env.BASE_URL,
   routes: [
     {

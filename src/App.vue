@@ -1,4 +1,3 @@
-// src/App.vue
 <template>
   <div class="App">
     <div id="nav">

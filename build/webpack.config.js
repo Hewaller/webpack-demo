@@ -3,34 +3,36 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const WebpackBar = require('webpackbar')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV !== 'production'
+
+console.log(isDev)
+
+function resolve(dir) {
+  return path.join(__dirname, '../', dir)
+}
 
 module.exports = {
-  entry: {
-    // 配置入口文件
-    main: path.resolve(__dirname, '../src/index.js')
-  },
+  // entry: {
+  //   // 配置入口文件
+  //   main: resolve('src')
+  // },
   output: {
-    // 配置打包文件输出的目录
-    path: path.resolve(__dirname, '../dist'),
-    // 生成的 js 文件名称
-    filename: 'js/[name].[hash:8].js',
-    // 生成的 chunk 名称
-    chunkFilename: 'js/[name].[hash:8].js',
-    // 资源引用的路径
+    path: resolve('dist'),
+    filename: 'js/[name].[hash].js',
+    chunkFilename: 'js/[name].[hash].js',
     publicPath: '/'
-  },
-  devServer: {
-    hot: true,
-    port: 3000,
-    contentBase: './dist'
   },
   resolve: {
     alias: {
-      vue$: 'vue/dist/vue.runtime.esm.js'
+      vue$: 'vue/dist/vue.runtime.esm.js',
+      '@': resolve('src')
     },
-    extensions: ['.js', '.vue']
+    extensions: ['.js', '.vue', '.json']
   },
   module: {
     rules: [
@@ -51,10 +53,10 @@ module.exports = {
         ]
       },
       {
-        test: /\.jsx?$/,
+        test: /\.js?$/,
+        exclude: /node_modules/,
         loader: 'babel-loader'
       },
-
       {
         test: /\.(jpe?g|png|gif)$/,
         use: [
@@ -65,7 +67,7 @@ module.exports = {
               fallback: {
                 loader: 'file-loader',
                 options: {
-                  name: 'img/[name].[hash:8].[ext]'
+                  name: 'images/[name].[ext]?[hash]'
                 }
               }
             }
@@ -82,7 +84,7 @@ module.exports = {
               fallback: {
                 loader: 'file-loader',
                 options: {
-                  name: 'media/[name].[hash:8].[ext]'
+                  name: 'media/[name].[ext]?[hash]'
                 }
               }
             }
@@ -99,22 +101,43 @@ module.exports = {
               fallback: {
                 loader: 'file-loader',
                 options: {
-                  name: 'fonts/[name].[hash:8].[ext]'
+                  name: 'fonts/[name].[ext]?[hash]'
                 }
               }
             }
           }
         ]
+      },
+      {
+        test: /\.(scss|css)$/,
+        use: [
+          !isDev ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
       }
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
-
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../public/index.html')
+    new WebpackBar(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        name: JSON.stringify(process.env.npm_package_name),
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
+      }
     }),
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new CopyWebpackPlugin([
+      {
+        from: resolve('public'),
+        to: '',
+        ignore: ['.*']
+      }
+    ]),
+    new HtmlWebpackPlugin({
+      template: resolve('public/index.html')
+    }),
+    new webpack.NamedModulesPlugin()
   ]
 }
